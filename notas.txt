@@ -1,0 +1,124 @@
+// https://devhints.io/git-log Contém dicas pra git.
+
+Qual a diferença entre Working Tree, Index e Head???
+
+git config --local user.name "Thiago Marçal" // Serve para definir o nome do usuário do Git nesse repositório. Há as opções local (repositório), global(usuário do OS) e system (para o computador todo).
+git config --local user.email thiagomarcal1984@gmail.com
+
+git log // Mostra o histórico de commits no repositório.
+git log --oneline // Mostra o histórico resumido dos commits no repositório.
+git log -n 2 // Mostra só os dois últimos logs.
+
+// Exibindo o log detalhado das alterações.
+git log -p // Exibe as alterações nos arquivos commitados.
+git log --patch // idem git log -p.
+git log -u // idem git log -p.
+
+// Esses dois comando só exibem os hashes.
+git log --pretty="format:%H" 
+git log --format="format:%H"
+
+
+// Criando um repositóri ogit
+git init --bare // Esse comando serve para que o repositório só guarde os registros das alterações e os arquivos comitados, sem copiar os arquivos intermediários. Ideal para criar servidores git.
+	Com este comando nós criamos um repositório que não terá a working tree, ou seja, não 
+	conterá uma cópia dos nossos arquivos. Como o repositório servirá apenas como servidor, 
+	para que outros membros da equipe sincronizem seus trabalhos, 
+	poupamos espaço de armazenamento desta forma.
+	
+	OBS: Não se esqueça do parâmetro --bare. Caso tenha executado o comando init sem esse 
+	parâmetro, execute na sequência o seguinte comando: git config core.bare true.
+
+
+// Repositórios remotos
+git remote // Lista os repositórios remotos que o meu repositório local reconhece.
+git remote -v // Lista os alias e o caminho apontado pelo alias.
+
+	D:\alura\git-e-github>git remote -v
+	local   d:\servidor-git (fetch) // Fetch = pode buscar dados do repositório.
+	local   d:\servidor-git (push) // Push = pode escrever dados no repositório.
+
+git remote add local d:\servidor-git // Adiciona um repositório remoto com o alias local que está no caminho d:\servidor-git.
+git remote add <alias do repositório> <diretório, caminho de rede ou URL do repositório> 
+
+git clone <caminho remoto> <diretório local> // Copia o repositório Git remoto para o diretório local.
+git clone d:\servidor-git projeto // Clona o repositório servidor-git para a subpasta projeto.
+
+git push <nome do repositório remoto> <nome do branch> // Empurra o conteúdo do repositório Git local para o repositório remoto, batizado com o nome de branch.
+git push local master
+
+git remote rename origin local // Renomeia (localmente) o repositório remoto, mudando o nome de origin para local.
+git remote rename <nome antigo> <nome novo>
+
+git pull <nome do repositorio remoto> <nome do branch> // Puxa o conteúdo do repositório remoto para o repositório local.
+
+// Controlando os branches
+git branch // Lista todas as branches do repositório.
+git branch <nome nova branch> // Cria uma nova branch no repositório. Ex.: git branch titulo
+
+git checkout <nome da branch escolhida> // Muda a branch do repositorio para a branch escolhida. Ex.: git checkout titulo
+
+// Como visualizar a sequência de commits no repositório: https://git-school.github.io/visualizing-git/
+
+git checkout -b <nome da branch> // Cria a branch e muda o head para a nova branch. Ex.: git checkout -b lista
+
+git checkout master // Usa o branch master. Depois que as alterações são feitas no código e comitadas, falta mesclar com as alterações do branch título.
+git merge titulo // Mescla as alterações do branch título com o branch atual (no caso, master).
+
+git log // O commit fica registrado como merge de titulo com master.
+git log --graph // Mostra um grafo com os commits.
+
+git rebase 
+
+// O merge junta os trabalhos e gera um merge commit. O rebase aplica os commits de outra branch na branch atual.
+// Com isso, evitamos os commits de merge. Há uma longa discussão sobre o que é "melhor": rebase ou merge. 
+// Aqui tem um artigo (de milhares outros) que cita o assunto: https://medium.com/datadriveninvestor/git-rebase-vs-merge-cc5199edd77c.
+
+	Que o git merge gera um novo commit, informando que houve uma mescla entre duas branches;
+	Como trazer os commits de uma branch para outra, com o git rebase
+	Que o git rebase não gera um commit de merge, simplificando o nosso log;
+
+// Desfazendo ações
+git checkout -- <arquivo> // restaura o arquivo que não está no stage para o status de antes de ser alterado.
+git reset <HEAD> <arquivo> // Tira do stage. Restaura o arquivo que está no stage para a versão de antes de entrar pro stage, com o status HEAD. 
+git revert <numero do hash> // Isso cria um novo commit revertendo para o estado anterior. Restaura o arquivo comitado para o estado anterior ao commit mencionado no hash. 
+
+// Guardando alterações temporária para conclusão posterior.
+git stash // Salva o conteúdo do branch atual na stash, local temporário. Stash = guardar em lugar seguro.
+git stash list // Lista todas as alterações pendentes de conclusão no stash.
+git stash apply <número da stash na lista de stash> // Recupera o status que estava na stash do número indicado na lista.
+git stash drop <número da stash na lista de stash> // remove a stash que estava na stash do número indicado da lista.
+git stash pop // aplica a última stash da lista e a remove da lista. É uma mistura de apply e drop.
+
+// Voltando para um hash anterior sem usar commit
+git checkout <número do hash> // Retorna o código para o mesmo status indicado no hash (que está na lista de log).
+// Quaisquer commits que vierem depois desse checkout estará desanexado, desvinculado, não será salvo.
+// Se você quer salvar as alterações a partir deste hash, é necessário criar um novo branch primeiro.
+git checkout -b <novo-branch> // Cria um novo branch e muda para ele em seguida.
+git commit -m "Mensagem" // Mensagem commitada no novo branch gerado a partir do checkout.
+
+	A descrição do comando git checkout --help, em uma tradução livre é: "Atualizar os arquivos na working 
+	tree para ficarem na versão especificada. [...]". Basicamente, podemos deixar o nosso código no estado 
+	do último commit de uma branch, de um commit específico, ou mesmo tags.
+	
+// Mostrando diferenças entre dois commits
+git diff // O git diff sozinho mostra todas as alterações feitas desde o último stage até o momento. Ou seja, tudo que você adicionar (git add) não é exibido no diff.
+git diff <hash1>..<hash2>  // Mostra a diferença entre dois hashes de commit. Perceba os pontos repetidos entre os dois hashes.
+
+
+// Adicionando uma tag no hash, para controlar versão.
+git tag -a <nome da versão> -m "<Mensagem>" // Acrescenta uma tag com uma mensagem.
+// Listando as tags no repositório
+git tag // Só isso. Assim obtemos a lista de tags do repositório.
+// Você pode fazer um push de uma tag ao invés de fazer push de um branch.
+git push local v0.1.0 // Empurra o que temos na tag v0.1.0 para o repositório local.
+git push <repositório> <tag ou branch>
+git tag -d <nome da tag para remover> // Remove a tag do repositório.
+
+// Merge e Rebase: crie um conflito entre dois branches e depois tente usar o comando.
+	Usando git status, a gente vê que os dois branches pode conter mudanças no mesmo arquivo ao mesmo tempo.
+	Após a modificação do arquivo gerado após a tentativa falha de merge/rebase, você pode usar o git add e o git commit em seguida.
+	
+// Cenário em que você tem um repositório desatualizado, mas com o commit feito localmente. O git push falha.
+	git pull <repositorio> <branch ou tag>
+	Daí você compara os conflitos.
